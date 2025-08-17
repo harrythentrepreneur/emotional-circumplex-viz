@@ -43,6 +43,8 @@ export default function EmotionalCircumplex() {
   const [copied, setCopied] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [activeEmotions, setActiveEmotions] = useState<string[]>(DEFAULT_ACTIVE_EMOTIONS);
+  const [opacity, setOpacity] = useState(0.7);
+  const [blendMode, setBlendMode] = useState<'screen' | 'multiply' | 'overlay' | 'normal'>('screen');
 
   // Generate circumplex data
   const circumplexData = useMemo(() => {
@@ -246,7 +248,7 @@ export default function EmotionalCircumplex() {
         .attr('r', 0)
         .style('fill', `url(#emotion-layer-${item.id})`)
         .style('opacity', 0)
-        .style('mix-blend-mode', index === 0 ? 'normal' : 'screen')
+        .style('mix-blend-mode', index === 0 ? 'normal' : blendMode)
         .style('filter', 'url(#emotion-glow)');
 
       emotionLayer
@@ -255,7 +257,7 @@ export default function EmotionalCircumplex() {
         .duration(1500 + index * 200)
         .ease(d3.easeBackOut.overshoot(1.1))
         .attr('r', baseRadius * 1.2)
-        .style('opacity', 0.7 + (item.intensity * 0.3));
+        .style('opacity', opacity + (item.intensity * 0.3));
     });
 
     // Add labels
@@ -354,7 +356,7 @@ export default function EmotionalCircumplex() {
       .duration(1000)
       .style('opacity', (d: CircumplexDataItem) => 0.9 + d.intensity * 0.1);
 
-  }, [circumplexData, dimensions]);
+  }, [circumplexData, dimensions, opacity, blendMode]);
 
   // Handle resize
   useEffect(() => {
@@ -437,47 +439,135 @@ export default function EmotionalCircumplex() {
           marginBottom: '3rem',
           border: '1px solid rgba(255, 255, 255, 0.1)'
         }}>
-          <h2 style={{
-            fontSize: '1.5rem',
-            color: '#FFD700',
-            marginBottom: '1.5rem',
-            fontFamily: "'Inter', sans-serif"
-          }}>
-            Select Emotions to Display
-          </h2>
-          
+          {/* Visual Controls */}
           <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '0.75rem'
+            marginBottom: '2rem',
+            padding: '1.5rem',
+            background: 'rgba(0, 0, 0, 0.3)',
+            borderRadius: '12px'
           }}>
-            {EMOTIONS.map(emotion => (
-              <button
-                key={emotion.id}
-                onClick={() => {
-                  if (activeEmotions.includes(emotion.id)) {
-                    if (activeEmotions.length > 1) {
-                      setActiveEmotions(activeEmotions.filter(e => e !== emotion.id));
-                    }
-                  } else {
-                    setActiveEmotions([...activeEmotions, emotion.id]);
-                  }
-                }}
-                style={{
-                  padding: '0.5rem 1rem',
-                  background: activeEmotions.includes(emotion.id) ? emotion.color : 'rgba(255, 255, 255, 0.1)',
-                  border: `2px solid ${emotion.color}`,
-                  borderRadius: '8px',
-                  color: activeEmotions.includes(emotion.id) ? '#1A1A2E' : '#F0F0F0',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
+            <h2 style={{
+              fontSize: '1.25rem',
+              color: '#4ECDC4',
+              marginBottom: '1.5rem',
+              fontFamily: "'Inter', sans-serif"
+            }}>
+              Visual Controls
+            </h2>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '1.5rem'
+            }}>
+              {/* Opacity Slider */}
+              <div>
+                <label style={{
+                  color: '#F0F0F0',
+                  fontSize: '0.9rem',
+                  marginBottom: '0.5rem',
+                  display: 'block',
                   fontFamily: "'Inter', sans-serif"
-                }}
-              >
-                {emotion.name}
-              </button>
-            ))}
+                }}>
+                  Opacity: {Math.round(opacity * 100)}%
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={opacity * 100}
+                  onChange={(e) => setOpacity(Number(e.target.value) / 100)}
+                  style={{
+                    width: '100%',
+                    height: '6px',
+                    borderRadius: '3px',
+                    background: `linear-gradient(to right, #4ECDC4 0%, #4ECDC4 ${opacity * 100}%, rgba(255, 255, 255, 0.2) ${opacity * 100}%, rgba(255, 255, 255, 0.2) 100%)`,
+                    outline: 'none',
+                    WebkitAppearance: 'none',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+
+              {/* Blend Mode Selector */}
+              <div>
+                <label style={{
+                  color: '#F0F0F0',
+                  fontSize: '0.9rem',
+                  marginBottom: '0.5rem',
+                  display: 'block',
+                  fontFamily: "'Inter', sans-serif"
+                }}>
+                  Blend Mode (How emotions merge)
+                </label>
+                <select
+                  value={blendMode}
+                  onChange={(e) => setBlendMode(e.target.value as any)}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '6px',
+                    color: '#F0F0F0',
+                    fontSize: '0.9rem',
+                    fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="screen">Screen (Bright merge)</option>
+                  <option value="multiply">Multiply (Dark merge)</option>
+                  <option value="overlay">Overlay (Contrast merge)</option>
+                  <option value="normal">Normal (No blending)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Emotion Selector */}
+          <div>
+            <h2 style={{
+              fontSize: '1.5rem',
+              color: '#FFD700',
+              marginBottom: '1.5rem',
+              fontFamily: "'Inter', sans-serif"
+            }}>
+              Select Emotions to Display
+            </h2>
+            
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.75rem'
+            }}>
+              {EMOTIONS.map(emotion => (
+                <button
+                  key={emotion.id}
+                  onClick={() => {
+                    if (activeEmotions.includes(emotion.id)) {
+                      if (activeEmotions.length > 1) {
+                        setActiveEmotions(activeEmotions.filter(e => e !== emotion.id));
+                      }
+                    } else {
+                      setActiveEmotions([...activeEmotions, emotion.id]);
+                    }
+                  }}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: activeEmotions.includes(emotion.id) ? emotion.color : 'rgba(255, 255, 255, 0.1)',
+                    border: `2px solid ${emotion.color}`,
+                    borderRadius: '8px',
+                    color: activeEmotions.includes(emotion.id) ? '#1A1A2E' : '#F0F0F0',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    fontFamily: "'Inter', sans-serif"
+                  }}
+                >
+                  {emotion.name}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
