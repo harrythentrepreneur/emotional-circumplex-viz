@@ -1,6 +1,6 @@
 # Emotional Circumplex Visualization
 
-A beautiful, interactive D3.js visualization of emotional states with organic blob effects. Perfect for psychology applications, mood trackers, and emotional intelligence dashboards.
+Hey! I created this beautiful circumplex graph visualization and wanted to share it with others. It's an interactive D3.js visualization that displays emotions as organic, flowing blobs that blend together beautifully. I originally built this for a personal project and thought others might find it useful or inspiring for their own work.
 
 ![Emotional Circumplex Demo](https://img.shields.io/badge/Demo-Live-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -106,12 +106,11 @@ Contributions are welcome! Feel free to:
 
 MIT License - feel free to use this in your projects!
 
-## 🙏 Credits
+## 🙏 Why I Made This
 
-Created with ❤️ using D3.js and Next.js
+I was working on analyzing emotional patterns and wanted a beautiful way to visualize the complex relationships between different emotions. The organic blob effect creates a really unique aesthetic that I haven't seen in other emotion visualizations. Feel free to use this in your own projects - I'd love to see what you create with it!
 
 ---
 
-**Live Demo**: [View on GitHub Pages](#)  
-**Author**: Your Name  
-**Contact**: your.email@example.com
+**Created by**: Harry Edwards  
+**Feel free to reach out if you have questions or want to share what you built!**
