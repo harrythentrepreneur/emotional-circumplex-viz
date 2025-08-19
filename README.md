@@ -21,7 +21,7 @@ Hey! I created this beautiful circumplex graph visualization and wanted to share
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/emotional-circumplex-viz.git
+git clone https://github.com/harrythentrepreneur/emotional-circumplex-viz.git
 
 # Navigate to the project
 cd emotional-circumplex-viz
